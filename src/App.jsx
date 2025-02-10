@@ -16,7 +16,7 @@ const App = () => {
   }, [isLoggedIn, navigate])
 
   return (
-    <div className='App'>
+    <div className='App bg-black bg-gradient-to-br from-gray-600 via-blue-300 to-purple-300 '>
       <Navbar />
       <Routes>
         <Route path="/login" element={<Login />} />
