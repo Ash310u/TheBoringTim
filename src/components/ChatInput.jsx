@@ -32,7 +32,7 @@ const ChatInput = ({ onSendMessage }) => {
   };
 
   return (
-    <div className="w-full p-4">
+    <div className="w-[60%] p-4">
       <form 
         onSubmit={handleSubmit}
         className="max-w-3xl mx-auto relative bg-gray-800 rounded-lg shadow-xl border border-gray-700"
