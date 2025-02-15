@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const questions = [
   { id: 1, text: "In the last month, how often have you been upset because of something that happened unexpectedly?", isReversed: false },

@@ -42,7 +42,7 @@ const ChatInput = ({ onSendMessage }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Send a message..."
+          placeholder="Hi! This you Ai Therapist..."
           className="w-full bg-transparent text-white placeholder-gray-400 p-4 pr-12 resize-none overflow-hidden max-h-48 focus:outline-none"
           rows={1}
         />
