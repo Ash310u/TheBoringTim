@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Option from './Option';
 
 const questions = [
   { id: 1, text: "In the last month, how often have you been upset because of something that happened unexpectedly?", isReversed: false },
@@ -34,12 +35,6 @@ const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isStarted, setIsStarted] = useState(false);
 
-  const handleChange = (value) => {
-    const newResponses = [...responses];
-    newResponses[currentQuestion] = value;
-    setResponses(newResponses);
-  };
-
   const calculateScore = () => {
     return responses.reduce((total, response) => total + (response || 0), 0);
   };
@@ -58,17 +53,17 @@ const Questionnaire = () => {
 
   if (!isStarted) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-2">
-        <div className="max-w-2xl mx-auto text-center backdrop-blur-lg bg-white/10 p-6 sm:p-8 rounded-3xl shadow-2xl border border-white/10 transform hover:scale-105 transition-all duration-300">
-          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+      <div className="h-screen flex items-center justify-center p-2">
+        <div className="min-w-[320px] max-w-xl mx-auto text-center backdrop-blur-lg bg-white/10 p-4 sm:p-6 rounded-2xl shadow-xl border border-white/10 transform hover:scale-105 transition-all duration-300">
+          <h1 className="text-xl sm:text-2xl font-bold text-white mb-3 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
             Stress Assessment Questionnaire
           </h1>
-          <p className="text-gray-300 mb-6 leading-relaxed text-sm sm:text-base">
+          <p className="text-gray-300 mb-4 leading-relaxed text-xs sm:text-sm">
             Take our comprehensive stress assessment to understand your current stress levels and receive personalized insights. This questionnaire will take approximately 2 minutes to complete.
           </p>
           <button
             onClick={() => setIsStarted(true)}
-            className="group relative inline-flex items-center px-6 py-3 text-base sm:text-lg font-bold text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-full overflow-hidden transition-all duration-300 hover:from-blue-600 hover:to-purple-600"
+            className="group relative inline-flex items-center px-4 py-2 text-sm sm:text-base font-bold text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-full overflow-hidden transition-all duration-300 hover:from-blue-600 hover:to-purple-600"
           >
             <span className="relative z-10">Get Started</span>
             <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -80,64 +75,46 @@ const Questionnaire = () => {
   }
 
   return (
-    <div className="flex justify-center">
-      <div className="w-full max-w-4xl bg-white/10 backdrop-blur-lg rounded-3xl p-4 sm:p-8 shadow-2xl border border-white/10">
+    <div className="h-screen flex items-center justify-center p-4">
+      <div className="w-[400px] h-[650px] max-w-3xl bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl border border-white/10">
         {/* Progress bar */}
-        <div className="w-full bg-gray-800/50 rounded-full h-2 mb-6 sm:mb-8">
+        <div className="w-full bg-gray-800/50 rounded-full h-1.5 mb-4 sm:mb-6">
           <div 
-            className="h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
+            className="h-1.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
             style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
           />
         </div>
 
-        <div className="space-y-6 sm:space-y-8">
+        <div className="space-y-4 sm:space-y-6 min-h-[400px]">
           {/* Question number */}
-          <p className="text-blue-900 text-xs sm:text-sm font-medium tracking-wider">
+          <p className="text-blue-900 text-xs font-medium tracking-wider">
             <span className="bg-gradient-to-r from-gray-600 to-blue-600 bg-clip-text text-transparent">QUESTION</span> {currentQuestion + 1}/{questions.length}
           </p>
 
           {/* Question text */}
-          <h2 className="text-xl sm:text-2xl lg:text-3xl text-white font-bold leading-relaxed">
+          <h2 className="text-lg sm:text-xl text-white font-bold leading-relaxed h-[85px]">
             {questions[currentQuestion].text}
           </h2>
 
           {/* Options */}
-          <div className="grid gap-3">
+          <div className="grid gap-2">
             {(questions[currentQuestion].isReversed ? reversedOptions : regularOptions).map(option => (
-              <div
+              <Option
                 key={option.value}
-                onClick={() => handleChange(option.value)}
-                className={`
-                  p-4 sm:p-6 rounded-xl border cursor-pointer transition-all duration-300 transform hover:scale-102
-                  ${responses[currentQuestion] === option.value 
-                    ? 'border-blue-400 bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white' 
-                    : 'border-white/10 hover:border-blue-400/50 text-white/80 hover:bg-white/5'
-                  }
-                `}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300
-                    ${responses[currentQuestion] === option.value 
-                      ? 'border-blue-400 bg-blue-400' 
-                      : 'border-white/50'
-                    }`}
-                  >
-                    {responses[currentQuestion] === option.value && (
-                      <div className="w-2.5 h-2.5 bg-white rounded-full" />
-                    )}
-                  </div>
-                  <span className="text-base sm:text-lg">{option.label}</span>
-                </div>
-              </div>
+                option={option}
+                responses={responses}
+                currentQuestion={currentQuestion}
+                setResponses={setResponses}
+              />
             ))}
           </div>
 
           {/* Navigation buttons */}
-          <div className="flex justify-between pt-6 sm:pt-8">
+          <div className="flex justify-between pt-4 sm:pt-6">
             <button
               onClick={previousQuestion}
               disabled={currentQuestion === 0}
-              className={`px-4 sm:px-6 py-3 rounded-xl font-medium text-sm sm:text-base transition-all duration-300
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300
                 ${currentQuestion === 0
                   ? 'bg-gray-800/50 text-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
@@ -155,7 +132,7 @@ const Questionnaire = () => {
                   else if (score > 13) stressLevel = "Moderate Stress";
                   alert(`Your total score is: ${score}\n${stressLevel}`);
                 }}
-                className="px-4 sm:px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl font-medium text-sm sm:text-base transition-all duration-300"
+                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg font-medium text-xs sm:text-sm transition-all duration-300"
               >
                 Calculate Score
               </button>
@@ -163,7 +140,7 @@ const Questionnaire = () => {
               <button
                 onClick={nextQuestion}
                 disabled={responses[currentQuestion] === null}
-                className={`px-4 sm:px-6 py-3 rounded-xl font-medium text-sm sm:text-base transition-all duration-300
+                className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300
                   ${responses[currentQuestion] === null
                     ? 'bg-gray-800/50 text-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
