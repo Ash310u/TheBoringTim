@@ -54,7 +54,7 @@ const Questionnaire = () => {
   if (!isStarted) {
     return (
       <div className="h-screen flex items-center justify-center p-2">
-        <div className="min-w-[320px] max-w-xl mx-auto text-center backdrop-blur-lg bg-white/10 p-4 sm:p-6 rounded-2xl shadow-xl border border-white/10 transform hover:scale-105 transition-all duration-300">
+        <div className="w-[400px] max-w-3xl mx-auto text-center backdrop-blur-lg bg-white/10 p-4 sm:p-6 rounded-2xl shadow-xl border border-white/10 transform hover:scale-105 transition-all duration-300">
           <h1 className="text-xl sm:text-2xl font-bold text-white mb-3 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
             Stress Assessment Questionnaire
           </h1>
@@ -76,7 +76,7 @@ const Questionnaire = () => {
 
   return (
     <div className="h-screen flex items-center justify-center p-4">
-      <div className="w-[400px] h-[650px] max-w-3xl bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl border border-white/10">
+      <div className="w-[400px] h-[650px] max-w-3xl  bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl border border-white/10">
         {/* Progress bar */}
         <div className="w-full bg-gray-800/50 rounded-full h-1.5 mb-4 sm:mb-6">
           <div 
