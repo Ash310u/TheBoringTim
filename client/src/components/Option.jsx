@@ -13,15 +13,15 @@ const Option = ({ option, responses, currentQuestion, setResponses }) => {
             className={`
                   p-3 sm:p-4 rounded-lg border cursor-pointer transition-all duration-300 transform hover:scale-102
                   ${responses[currentQuestion] === option.value
-                    ? 'border-blue-400 bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white'
-                    : 'border-white/10 hover:border-blue-400/50 text-white/80 hover:bg-white/5'
+                    ? 'border-pink-300 bg-gradient-to-r from-pink-400/10 to-pink-500/10 text-white'
+                    : 'border-white/10 hover:border-pink-300/30 text-white/80 hover:bg-white/5'
                 }
                 `}
         >
             <div className="flex items-center space-x-3">
                 <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-300
                     ${responses[currentQuestion] === option.value
-                        ? 'border-blue-400 bg-blue-400'
+                        ? 'border-pink-300 bg-pink-300'
                         : 'border-white/50'
                     }`}
                 >

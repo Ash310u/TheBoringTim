@@ -3,7 +3,7 @@ import NavLink from "./features/NavLink"
 
 const Navbar = () => {
     const navLinks = [
-        { path: '/Dashboard', label: "Dashboard" },
+        { path: '/dashboard', label: "Dashboard" },
         { path: '/profile', label: "Profile" },
     ]
 
@@ -16,15 +16,15 @@ const Navbar = () => {
     })
 
     return (
-        <div className="bg-white/80 flex justify-between py-5 px-8">
+        <div className="bg-gradient-to-r from-slate-800 to-slate-900 shadow-lg flex justify-between items-center py-6 px-10">
             <div>
-                <Link to="/" className="flex items-center font-bold text-xl">
-                    <span className="bg-gradient-to-r from-gray-600 to-blue-600 bg-clip-text text-transparent">
-                        PeaceSync
-                    </span>
+                <Link to="/" className="flex items-center font-bold text-xl transition-all duration-300 hover:scale-105">
+                        <span className="bg-gradient-to-r from-violet-300 to-pink-200 bg-clip-text text-transparent">
+                            PeaceSync
+                        </span>
                 </Link>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-6">
                 {content}
             </div>
         </div>

@@ -4,23 +4,44 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setToken, setUserId } from './store/slices/authSlice';
 
 const App = () => {
   const navigate = useNavigate();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const dispatch = useDispatch();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate('/login')
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    
+    if (token && userId) {
+      dispatch(setToken(token));
+      dispatch(setUserId(userId));
+      setIsLoggedIn(true);
+      
+      // Navigate to dashboard if on login page or root path
+      if (window.location.pathname === '/') {
+        navigate('/dashboard', { replace: true });
+      }
+    } else {
+      setIsLoggedIn(false);
     }
-  }, [isLoggedIn, navigate])
+  }, [dispatch, navigate]);
+
+  useEffect(() => {
+    // Only redirect to login if not logged in and currently on a protected route
+    if (!isLoggedIn && window.location.pathname !== '/') {
+      navigate('/', { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
-    <div className='App bg-black bg-gradient-to-br from-gray-600 via-blue-300 to-purple-300 '>
+    <div className='App'>
       <Navbar />
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={isLoggedIn ? <Dashboard /> : <Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>

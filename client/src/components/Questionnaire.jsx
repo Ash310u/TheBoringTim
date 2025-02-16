@@ -54,20 +54,20 @@ const Questionnaire = () => {
   if (!isStarted) {
     return (
       <div className="h-screen flex items-center justify-center p-2">
-        <div className="w-[400px] max-w-3xl mx-auto text-center backdrop-blur-lg bg-white/10 p-4 sm:p-6 rounded-2xl shadow-xl border border-white/10 transform hover:scale-105 transition-all duration-300">
-          <h1 className="text-xl sm:text-2xl font-bold text-white mb-3 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+        <div className="w-[400px] max-w-3xl mx-auto text-center backdrop-blur-lg bg-slate-800/40 p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-700/50 transform hover:scale-105 transition-all duration-300">
+          <h1 className="text-xl sm:text-2xl font-bold text-white/90 mb-3 bg-clip-text text-transparent bg-gradient-to-r from-violet-300/90 to-violet-500/90">
             Stress Assessment Questionnaire
           </h1>
-          <p className="text-gray-300 mb-4 leading-relaxed text-xs sm:text-sm">
+          <p className="text-slate-300/80 mb-4 leading-relaxed text-xs sm:text-sm">
             Take our comprehensive stress assessment to understand your current stress levels and receive personalized insights. This questionnaire will take approximately 2 minutes to complete.
           </p>
           <button
             onClick={() => setIsStarted(true)}
-            className="group relative inline-flex items-center px-4 py-2 text-sm sm:text-base font-bold text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-full overflow-hidden transition-all duration-300 hover:from-blue-600 hover:to-purple-600"
+            className="group relative inline-flex items-center px-4 py-2 text-sm sm:text-base font-bold text-white/90 bg-gradient-to-r from-violet-400/90 to-violet-600/90 rounded-full overflow-hidden transition-all duration-300 hover:from-violet-500/90 hover:to-violet-700/90"
           >
             <span className="relative z-10">Get Started</span>
-            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="absolute inset-0 -z-20 bg-gradient-to-r from-blue-400 to-purple-400 animate-pulse"></div>
+            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-violet-500/80 to-violet-700/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 -z-20 bg-gradient-to-r from-violet-300/70 to-violet-500/70 animate-pulse"></div>
           </button>
         </div>
       </div>
@@ -76,19 +76,19 @@ const Questionnaire = () => {
 
   return (
     <div className="h-screen flex items-center justify-center p-4">
-      <div className="w-[400px] h-[650px] max-w-3xl  bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl border border-white/10">
+      <div className="w-[400px] h-[650px] max-w-3xl bg-slate-800/40 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-700/50">
         {/* Progress bar */}
-        <div className="w-full bg-gray-800/50 rounded-full h-1.5 mb-4 sm:mb-6">
+        <div className="w-full bg-slate-700/30 rounded-full h-1.5 mb-4 sm:mb-6">
           <div 
-            className="h-1.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
+            className="h-1.5 bg-gradient-to-r from-violet-400 to-violet-600 rounded-full transition-all duration-500"
             style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
           />
         </div>
 
         <div className="space-y-4 sm:space-y-6 min-h-[400px]">
           {/* Question number */}
-          <p className="text-blue-900 text-xs font-medium tracking-wider">
-            <span className="bg-gradient-to-r from-gray-600 to-blue-600 bg-clip-text text-transparent">QUESTION</span> {currentQuestion + 1}/{questions.length}
+          <p className="text-slate-300 text-xs font-medium tracking-wider">
+            <span className="bg-gradient-to-r from-violet-300 to-violet-500 bg-clip-text text-transparent">QUESTION</span> {currentQuestion + 1}/{questions.length}
           </p>
 
           {/* Question text */}
@@ -116,8 +116,8 @@ const Questionnaire = () => {
               disabled={currentQuestion === 0}
               className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300
                 ${currentQuestion === 0
-                  ? 'bg-gray-800/50 text-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
+                  ? 'bg-slate-700/30 text-slate-400/50 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 text-white'
                 }`}
             >
               Previous
@@ -132,7 +132,7 @@ const Questionnaire = () => {
                   else if (score > 13) stressLevel = "Moderate Stress";
                   alert(`Your total score is: ${score}\n${stressLevel}`);
                 }}
-                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg font-medium text-xs sm:text-sm transition-all duration-300"
+                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 text-white rounded-lg font-medium text-xs sm:text-sm transition-all duration-300"
               >
                 Calculate Score
               </button>
@@ -142,8 +142,8 @@ const Questionnaire = () => {
                 disabled={responses[currentQuestion] === null}
                 className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300
                   ${responses[currentQuestion] === null
-                    ? 'bg-gray-800/50 text-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
+                    ? 'bg-slate-700/30 text-slate-400/50 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 text-white'
                   }`}
               >
                 Next
@@ -157,3 +157,4 @@ const Questionnaire = () => {
 };
 
 export default Questionnaire;
+    
