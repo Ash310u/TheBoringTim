@@ -6,11 +6,12 @@ import Profile from './pages/Profile';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setToken, setUserId } from './store/slices/authSlice';
+import MoodMap from './pages/Moodmap';
 
 const App = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -44,6 +45,7 @@ const App = () => {
         <Route path="/" element={isLoggedIn ? <Dashboard /> : <Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/moodmap" element={<MoodMap />} />
       </Routes>
     </div>
   )
