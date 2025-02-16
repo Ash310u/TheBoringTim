@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 const App = () => {
   const navigate = useNavigate();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
     if (!isLoggedIn) {
