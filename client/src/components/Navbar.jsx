@@ -4,6 +4,7 @@ import NavLink from "./features/NavLink"
 const Navbar = () => {
     const navLinks = [
         { path: '/dashboard', label: "Dashboard" },
+        { path: '/moodmap', label: "MoodMap" },
         { path: '/profile', label: "Profile" },
     ]
 
