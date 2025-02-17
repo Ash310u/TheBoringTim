@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Option from './Option';
 import ScoreModal from './ScoreModal';
+import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
 
 const questions = [
   { id: 1, text: "In the last month, how often have you been upset because of something that happened unexpectedly?", isReversed: false },
@@ -37,6 +38,7 @@ const Questionnaire = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
 
   const calculateScore = () => {
     return responses.reduce((total, response) => total + (response || 0), 0);
@@ -45,14 +47,51 @@ const Questionnaire = () => {
   const nextQuestion = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+      setSelectedOptionIndex(0);
     }
   };
 
   const previousQuestion = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
+      setSelectedOptionIndex(0);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const options = questions[currentQuestion].isReversed ? reversedOptions : regularOptions;
+
+      switch(e.key) {
+        case 'ArrowLeft':
+          previousQuestion();
+          break;
+        case 'ArrowRight':
+          if (responses[currentQuestion] !== null) {
+            if (currentQuestion === questions.length - 1) {
+              const score = calculateScore();
+              setFinalScore(score);
+              setShowModal(true);
+            } else {
+              nextQuestion();
+            }
+          }
+          break;
+        case 'Enter':
+          setResponses(prev => {
+            const newResponses = [...prev];
+            newResponses[currentQuestion] = options[selectedOptionIndex].value;
+            return newResponses;
+          });
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentQuestion, responses, selectedOptionIndex]);
 
   if (!isStarted) {
     return (
@@ -101,13 +140,14 @@ const Questionnaire = () => {
 
           {/* Options */}
           <div className="grid gap-2">
-            {(questions[currentQuestion].isReversed ? reversedOptions : regularOptions).map(option => (
+            {(questions[currentQuestion].isReversed ? reversedOptions : regularOptions).map((option, index) => (
               <Option
                 key={option.value}
                 option={option}
                 responses={responses}
                 currentQuestion={currentQuestion}
                 setResponses={setResponses}
+                isSelected={index === selectedOptionIndex}
               />
             ))}
           </div>
@@ -117,13 +157,13 @@ const Questionnaire = () => {
             <button
               onClick={previousQuestion}
               disabled={currentQuestion === 0}
-              className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300 flex items-center gap-2
                 ${currentQuestion === 0
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white'
                 }`}
             >
-              Previous
+              <IoArrowBack /> Previous
             </button>
 
             {currentQuestion === questions.length - 1 ? (
@@ -133,21 +173,21 @@ const Questionnaire = () => {
                   setFinalScore(score);
                   setShowModal(true);
                 }}
-                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white rounded-lg font-medium text-xs sm:text-sm transition-all duration-300"
+                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white rounded-lg font-medium text-xs sm:text-sm transition-all duration-300 flex items-center gap-2"
               >
-                Calculate Score
+                Calculate Score <IoArrowForward />
               </button>
             ) : (
               <button
                 onClick={nextQuestion}
                 disabled={responses[currentQuestion] === null}
-                className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300
+                className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300 flex items-center gap-2
                   ${responses[currentQuestion] === null
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white'
                   }`}
               >
-                Next
+                Next <IoArrowForward />
               </button>
             )}
           </div>
@@ -162,4 +202,4 @@ const Questionnaire = () => {
   );
 };
 
-export default Questionnaire;    
+export default Questionnaire;

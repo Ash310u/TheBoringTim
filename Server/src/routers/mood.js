@@ -46,7 +46,7 @@ router.get('/user/:userId', auth, async (req, res) => {
     try {
         const startDate = req.query.startDate;
         const endDate = req.query.endDate;
-        console.log(startDate, endDate)
+
         const query = {
             userId: req.params.userId,
         };

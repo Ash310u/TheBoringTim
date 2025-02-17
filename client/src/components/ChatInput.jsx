@@ -42,14 +42,14 @@ const ChatInput = ({ onSendMessage }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Hi! This you Ai Therapist..."
+          placeholder="Hi! This is your AI Therapist..."
           className="w-full bg-transparent text-white placeholder-gray-400 p-4 pr-12 resize-none overflow-hidden max-h-48 focus:outline-none"
           rows={1}
         />
         <button
           type="submit"
           disabled={!message.trim()}
-          className={`absolute right-2 bottom-2 p-2 rounded-lg transition-all duration-200 
+          className={`absolute right-2 bottom-3 p-2 rounded-lg transition-all duration-200 
             ${message.trim() 
               ? 'bg-blue-600 hover:bg-blue-700 text-white' 
               : 'bg-gray-700 text-gray-400'
