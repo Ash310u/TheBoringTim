@@ -1,4 +1,30 @@
+import { useGetUserQuery, useGetAvatarQuery } from "../store";
+import { useSelector } from "react-redux";
+import defaultAvatar from "../assets/default_avatar.jpg";
+
 const Profile = () => {
+  const userId = useSelector((state) => state.auth.userId);
+  const { data: user, isLoading, error } = useGetUserQuery();
+  const { data: avatarBlob } = useGetAvatarQuery(userId);
+
+  const avatarUrl = avatarBlob ? URL.createObjectURL(avatarBlob) : defaultAvatar;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 p-4 md:p-8 lg:p-12 flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 p-4 md:p-8 lg:p-12 flex items-center justify-center">
+        <p>Error loading profile</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 p-4 md:p-8 lg:p-12">
       <div className="max-w-7xl mx-auto">
@@ -9,13 +35,15 @@ const Profile = () => {
               <div className="text-center">
                 <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white shadow-md">
                   <img 
-                    src="/default-avatar.png" 
+                    src={avatarUrl}
                     alt="Profile" 
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h2 className="text-2xl font-medium text-gray-700 mt-4">Sarah Mitchell</h2>
-                <p className="text-gray-500">@sarahm</p>
+                <h2 className="text-2xl font-medium text-gray-700 mt-4">{user.name}</h2>
+                <p className="text-gray-500 mt-1">{user.email}</p>
+                <p className="text-gray-500 mt-1">Age: {user.age || 'Not specified'}</p>
+                <p className="text-gray-500 mt-1">Member since: {new Date(user.createdAt).toLocaleDateString()}</p>
                 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-4 mt-6">
@@ -88,4 +116,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

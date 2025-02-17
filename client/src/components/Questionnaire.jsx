@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Option from './Option';
+import ScoreModal from './ScoreModal';
 
 const questions = [
   { id: 1, text: "In the last month, how often have you been upset because of something that happened unexpectedly?", isReversed: false },
@@ -34,6 +35,8 @@ const Questionnaire = () => {
   const [responses, setResponses] = useState(Array(questions.length).fill(null));
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isStarted, setIsStarted] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [finalScore, setFinalScore] = useState(0);
 
   const calculateScore = () => {
     return responses.reduce((total, response) => total + (response || 0), 0);
@@ -54,20 +57,18 @@ const Questionnaire = () => {
   if (!isStarted) {
     return (
       <div className="h-screen flex items-center justify-center p-2">
-        <div className="w-[400px] max-w-3xl mx-auto text-center backdrop-blur-lg bg-slate-800/40 p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-700/50 transform hover:scale-105 transition-all duration-300">
-          <h1 className="text-xl sm:text-2xl font-bold text-white/90 mb-3 bg-clip-text text-transparent bg-gradient-to-r from-violet-300/90 to-violet-500/90">
+        <div className="w-[400px] max-w-3xl mx-auto text-center backdrop-blur-lg bg-gray-100/90 p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-200 transform hover:scale-105 transition-all duration-300">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
             Stress Assessment Questionnaire
           </h1>
-          <p className="text-slate-300/80 mb-4 leading-relaxed text-xs sm:text-sm">
+          <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm">
             Take our comprehensive stress assessment to understand your current stress levels and receive personalized insights. This questionnaire will take approximately 2 minutes to complete.
           </p>
           <button
             onClick={() => setIsStarted(true)}
-            className="group relative inline-flex items-center px-4 py-2 text-sm sm:text-base font-bold text-white/90 bg-gradient-to-r from-violet-400/90 to-violet-600/90 rounded-full overflow-hidden transition-all duration-300 hover:from-violet-500/90 hover:to-violet-700/90"
+            className="group relative inline-flex items-center px-4 py-2 text-sm sm:text-base font-bold text-white bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full overflow-hidden transition-all duration-300 hover:opacity-90"
           >
             <span className="relative z-10">Get Started</span>
-            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-violet-500/80 to-violet-700/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="absolute inset-0 -z-20 bg-gradient-to-r from-violet-300/70 to-violet-500/70 animate-pulse"></div>
           </button>
         </div>
       </div>
@@ -76,23 +77,25 @@ const Questionnaire = () => {
 
   return (
     <div className="h-screen flex items-center justify-center p-4">
-      <div className="w-[400px] h-[650px] max-w-3xl bg-slate-800/40 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-700/50">
+      <div className="w-[400px] h-[650px] max-w-3xl bg-gray-100/90 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl border border-gray-200">
         {/* Progress bar */}
-        <div className="w-full bg-slate-700/30 rounded-full h-1.5 mb-4 sm:mb-6">
+        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 sm:mb-6">
           <div 
-            className="h-1.5 bg-gradient-to-r from-violet-400 to-violet-600 rounded-full transition-all duration-500"
+            className="h-2.5 rounded-full transition-all duration-500 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"
             style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
-          />
+          >
+            <div className="w-full h-full bg-[rgba(255,255,255,0.2)] rounded-full"></div>
+          </div>
         </div>
 
         <div className="space-y-4 sm:space-y-6 min-h-[400px]">
           {/* Question number */}
-          <p className="text-slate-300 text-xs font-medium tracking-wider">
-            <span className="bg-gradient-to-r from-violet-300 to-violet-500 bg-clip-text text-transparent">QUESTION</span> {currentQuestion + 1}/{questions.length}
+          <p className="text-gray-600 text-xs font-medium tracking-wider">
+            QUESTION {currentQuestion + 1}/{questions.length}
           </p>
 
           {/* Question text */}
-          <h2 className="text-lg sm:text-xl text-white font-bold leading-relaxed h-[85px]">
+          <h2 className="text-lg sm:text-xl text-gray-800 font-bold leading-relaxed h-[85px]">
             {questions[currentQuestion].text}
           </h2>
 
@@ -116,8 +119,8 @@ const Questionnaire = () => {
               disabled={currentQuestion === 0}
               className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300
                 ${currentQuestion === 0
-                  ? 'bg-slate-700/30 text-slate-400/50 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 text-white'
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white'
                 }`}
             >
               Previous
@@ -127,12 +130,10 @@ const Questionnaire = () => {
               <button
                 onClick={() => {
                   const score = calculateScore();
-                  let stressLevel = "Low Stress";
-                  if (score > 26) stressLevel = "High Perceived Stress";
-                  else if (score > 13) stressLevel = "Moderate Stress";
-                  alert(`Your total score is: ${score}\n${stressLevel}`);
+                  setFinalScore(score);
+                  setShowModal(true);
                 }}
-                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 text-white rounded-lg font-medium text-xs sm:text-sm transition-all duration-300"
+                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white rounded-lg font-medium text-xs sm:text-sm transition-all duration-300"
               >
                 Calculate Score
               </button>
@@ -142,8 +143,8 @@ const Questionnaire = () => {
                 disabled={responses[currentQuestion] === null}
                 className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300
                   ${responses[currentQuestion] === null
-                    ? 'bg-slate-700/30 text-slate-400/50 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 text-white'
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white'
                   }`}
               >
                 Next
@@ -152,9 +153,13 @@ const Questionnaire = () => {
           </div>
         </div>
       </div>
+      <ScoreModal 
+        score={finalScore}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+      />
     </div>
   );
 };
 
-export default Questionnaire;
-    
+export default Questionnaire;    
