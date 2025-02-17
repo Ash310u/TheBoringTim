@@ -55,21 +55,12 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 })
 
-// setting up a virtual property, It's a relationship between two entities (in this case between user & task)
-// userSchema.virtual('topics', {
-//     ref: 'Topic',
-//     // local field is that where that local data is stored [ _id ObjectId on User model ]
-//     localField: '_id',
-//     // foreign field is the name of the field on the other thing, what creates the relationship between two models [ owner ObjectId on Task model]
-//     foreignField: 'owner'
-// })
-
-// Remove duplicate virtual property
-// userSchema.virtual('topics', {
-//     ref: 'Task',
-//     localField: '_id',
-//     foreignField: 'owner'
-// })
+// setting up a virtual property, It's a relationship between two entities (in this case between user & mood)
+userSchema.virtual('moods', {
+    ref: 'Mood',
+    localField: '_id',
+    foreignField: 'userId'
+})
 
 // setting toJSON method
 userSchema.methods.toJSON = function () {
