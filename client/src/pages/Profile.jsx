@@ -1,13 +1,85 @@
-import { useGetUserQuery, useGetAvatarQuery } from "../store";
-import { useSelector } from "react-redux";
+import { useGetUserQuery, useGetAvatarQuery, useUploadAvatarMutation, setUserInfo, setUserAvatar, useDeleteAvatarMutation } from "../store";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useRef } from 'react';
 import defaultAvatar from "../assets/default_avatar.jpg";
+import EditPhotoButton from "../components/features/EditPhotoButton";
+import RemovePhotoButton from "../components/features/RemovePhotoButton";
 
 const Profile = () => {
+  const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth.userId);
-  const { data: user, isLoading, error } = useGetUserQuery();
+  const userData = useSelector((state) => state.user);
+  const fileInputRef = useRef(null);
+  const { data: user, isLoading, error } = useGetUserQuery(undefined, {
+    skip: !!(userData.username && userData.email)
+  });
   const { data: avatarBlob } = useGetAvatarQuery(userId);
+  const [uploadAvatar] = useUploadAvatarMutation();
+  const [deleteAvatar] = useDeleteAvatarMutation();
 
-  const avatarUrl = avatarBlob ? URL.createObjectURL(avatarBlob) : defaultAvatar;
+  // Handle avatar blob changes
+  useEffect(() => {
+    if (avatarBlob) {
+      // Clean up any existing object URL to prevent memory leaks
+      if (userData.avatarUrl) {
+        URL.revokeObjectURL(userData.avatarUrl);
+      }
+      const avatarUrl = URL.createObjectURL(avatarBlob);
+      dispatch(setUserAvatar(avatarUrl));
+    }
+  }, [avatarBlob]);
+
+  // Handle user data changes
+  useEffect(() => {
+    if (user && !userData.username) {
+      dispatch(setUserInfo({
+        username: user.name,
+        email: user.email,
+        age: user.age,
+        joinedDate: user.joinedDate
+      }));
+    }
+  }, [user, userData.username]);
+
+  const handleEditPhoto = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a JPEG, PNG, or JPG image');
+      return;
+    }
+
+    // Create FormData and append file
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    try {
+      await uploadAvatar(formData).unwrap();
+      // Refetch avatar after successful upload
+      window.location.reload(); // This is a temporary solution to refresh the avatar
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      alert('Failed to upload avatar. Please try again.');
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    try {
+      await deleteAvatar().unwrap();
+      // Clear the avatar URL from Redux store
+      dispatch(setUserAvatar(defaultAvatar));
+    } catch (error) {
+      console.error('Error removing avatar:', error);
+      alert('Failed to remove avatar. Please try again.');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -25,6 +97,15 @@ const Profile = () => {
     );
   }
 
+  // Use data from Redux store if available, otherwise use API response
+  const displayUser = userData.username ? {
+    name: userData.username,
+    email: userData.email,
+    age: userData.age,
+    avatarUrl: userData.avatarUrl,
+    joinedDate: userData.joinedDate
+  } : user;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 p-4 md:p-8 lg:p-12">
       <div className="max-w-7xl mx-auto">
@@ -33,17 +114,28 @@ const Profile = () => {
           <div className="md:col-span-4 lg:col-span-3">
             <div className="bg-white rounded-3xl p-6 shadow-lg">
               <div className="text-center">
-                <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white shadow-md">
-                  <img 
-                    src={avatarUrl}
-                    alt="Profile" 
-                    className="w-full h-full object-cover"
-                  />
+                <div className="relative w-32 h-32 mx-auto">
+                  <div className="rounded-full overflow-hidden border-4 border-white shadow-md w-full h-full">
+                    <img 
+                      src={userData.avatarUrl}
+                      alt="Profile" 
+                      className="w-full h-full object-cover rounded-full"
+                      style={{ objectFit: 'cover', aspectRatio: '1/1' }}
+                    />
+                  </div>
+                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+                    <EditPhotoButton 
+                      onEdit={handleEditPhoto}
+                      fileInputRef={fileInputRef}
+                      onFileChange={handlePhotoUpload}
+                    />
+                    <RemovePhotoButton onRemove={handleRemovePhoto} />
+                  </div>
                 </div>
-                <h2 className="text-2xl font-medium text-gray-700 mt-4">{user.name}</h2>
-                <p className="text-gray-500 mt-1">{user.email}</p>
-                <p className="text-gray-500 mt-1">Age: {user.age || 'Not specified'}</p>
-                <p className="text-gray-500 mt-1">Member since: {new Date(user.createdAt).toLocaleDateString()}</p>
+                <h2 className="text-2xl font-medium text-gray-700 mt-4">{displayUser.name}</h2>
+                <p className="text-gray-500 mt-1">{displayUser.email}</p>
+                <p className="text-gray-500 mt-1">Age: {displayUser.age || 'Not specified'}</p>
+                <p className="text-gray-500 mt-1">Joined: {new Date(displayUser.joinedDate).toDateString()}</p>
                 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-4 mt-6">

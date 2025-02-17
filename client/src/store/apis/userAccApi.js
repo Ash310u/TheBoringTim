@@ -30,10 +30,27 @@ const userAccApi = createApi({
                         responseHandler: (response) => response.blob(),
                     }
                 }
+            }),
+            uploadAvatar: builder.mutation({
+                query: (formData) => {
+                    return {
+                        url: `/users/me/avatar`,
+                        method: "POST",
+                        body: formData
+                    }
+                }
+            }),
+            deleteAvatar: builder.mutation({
+                query: () => {
+                    return {
+                        url: `/users/me/avatar`,
+                        method: "DELETE",
+                    }
+                }
             })
         }
     }
 })
 
 export { userAccApi };
-export const { useGetUserQuery, useGetAvatarQuery } = userAccApi;
+export const { useGetUserQuery, useGetAvatarQuery, useUploadAvatarMutation, useDeleteAvatarMutation } = userAccApi;

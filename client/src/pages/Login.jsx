@@ -4,7 +4,7 @@ import Input from '../components/features/Input';
 import Blob from '../components/Blob';
 import { useSignupMutation, useLoginMutation } from '../store';
 import { useDispatch } from 'react-redux';
-import { setToken, setUserId } from '../store';
+import { setToken, setUserId, setUserInfo } from '../store';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -17,7 +17,8 @@ const Login = () => {
   const signupFields = [
     { type: "text", id: "name", name: "name", placeholder: "Full Name" },
     { type: "email", id: "signup-email", name: "email", placeholder: "Email Address" },
-    { type: "password", id: "signup-password", name: "password", placeholder: "Create Password" }
+    { type: "password", id: "signup-password", name: "password", placeholder: "Create Password" },
+    { type: "number", id: "age", name: "age", placeholder: "Age" }
   ];
 
   const loginFields = [
@@ -35,6 +36,12 @@ const Login = () => {
       localStorage.setItem('userId', response.data.user._id);
       dispatch(setToken(response.data.token));
       dispatch(setUserId(response.data.user._id));
+      dispatch(setUserInfo({
+        username: response.data.user.name,
+        email: response.data.user.email,
+        age: response.data.user.age,
+        joinedDate: response.data.user.joinedDate
+      }));
       navigate('/dashboard');
     }
   };
@@ -49,6 +56,12 @@ const Login = () => {
       localStorage.setItem('userId', response.data.user._id);
       dispatch(setToken(response.data.token));
       dispatch(setUserId(response.data.user._id));
+      dispatch(setUserInfo({
+        username: response.data.user.name,
+        email: response.data.user.email,
+        age: response.data.user.age,
+        joinedDate: response.data.user.joinedDate
+      }));
       navigate('/dashboard');
     }
   };

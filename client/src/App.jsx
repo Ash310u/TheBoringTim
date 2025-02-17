@@ -21,21 +21,19 @@ const App = () => {
       dispatch(setToken(token));
       dispatch(setUserId(userId));
       setIsLoggedIn(true);
-      
-      // Navigate to dashboard if on login page or root path
-      if (window.location.pathname === '/') {
-        navigate('/dashboard', { replace: true });
-      }
     } else {
       setIsLoggedIn(false);
     }
   }, [dispatch, navigate]);
 
   useEffect(() => {
-    // Only redirect to login if not logged in and currently on a protected route
-    if (!isLoggedIn && window.location.pathname !== '/') {
-      navigate('/', { replace: true });
+    if (isLoggedIn) {
+      navigate(window.location.pathname);
     }
+    // Only redirect to login if not logged in and currently on a protected route
+    // if (!isLoggedIn && window.location.pathname !== '/') {
+    //   navigate('/', { replace: true });
+    // }
   }, [isLoggedIn, navigate]);
 
   return (
