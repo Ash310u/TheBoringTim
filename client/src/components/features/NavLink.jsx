@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 const NavLink = ({ to, children }) => {
     const location = useLocation()
     const isActive = location.pathname === to
-        ? 'bg-gradient-to-r from-violet-300 to-pink-200 bg-clip-text text-transparent'
+        ? 'bg-gradient-to-r from-violet-400 to-pink-300 bg-clip-text text-transparent'
         : 'text-gray-600 hover:text-pink-400'
 
     return (
