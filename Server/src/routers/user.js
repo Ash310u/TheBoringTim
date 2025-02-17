@@ -142,7 +142,6 @@ router.get('/users/:id/avatar', async (req, res) => {
 
         res.set('Content-Type', 'image/png')
         res.send(user.avatar)
-        console.log(user.avatar)
     } catch (error) {
         res.status(404).send()
     }
