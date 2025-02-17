@@ -1,17 +1,30 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
-const MoodModal = ({ date, onClose, moodData, setMoodData, emotions }) => {
-  const dateKey = date.toISOString().split('T')[0];
+const MoodModal = ({ date, onClose, moodData, emotions, onSave }) => {
+  const userId = useSelector(state => state.auth.userId);
+  const dateObj = new Date(date);
+  const dateKey = Number(
+    dateObj.getFullYear().toString() +
+    (dateObj.getMonth() + 1).toString().padStart(2, '0') +
+    dateObj.getDate().toString().padStart(2, '0')
+  );
   const [tempMoodData, setTempMoodData] = useState(
     moodData[dateKey] || { mood: emotions[0], note: '', intensity: 50 }
   );
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleSave = () => {
-    setMoodData(prev => ({
-      ...prev,
-      [dateKey]: tempMoodData
-    }));
+    const moodPayload = {
+      userId,
+      date: date.toISOString(),
+      emotion: tempMoodData.mood.name,
+      intensity: tempMoodData.intensity,
+      note: tempMoodData.note
+    };
+
+    onSave(moodPayload);
     onClose();
   };
 
@@ -109,4 +122,4 @@ const MoodModal = ({ date, onClose, moodData, setMoodData, emotions }) => {
   );
 };
 
-export default MoodModal; 
+export default MoodModal;

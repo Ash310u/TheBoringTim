@@ -1,24 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import DayCard from '../components/DayCard';
 import MoodModal from '../components/MoodModal';
+import { useCreateMoodMutation, useGetMoodsQuery, setMood, setMonthMoods } from '../store';
 
 const MoodMap = () => {
-  const emotions = [
-    { name: 'Happy', emoji: '😊' },
-    { name: 'Sad', emoji: '😢' },
-    { name: 'Angry', emoji: '😠' },
-    { name: 'Excited', emoji: '🤩' },
-    { name: 'Tired', emoji: '😴' },
-    { name: 'Anxious', emoji: '😰' },
-  ];
+  const emotions = useSelector(state => state.mood.emotions);
+  const moods = useSelector(state => state.mood.moods);
+  const userId = useSelector(state => state.auth.userId);
+  const dispatch = useDispatch();
 
-  const [moodData, setMoodData] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedYear, setSelectedYear] = useState(2024);
+  const [selectedYear, setSelectedYear] = useState(2025);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
+  const [createMood] = useCreateMoodMutation();
 
   // Get all months
   const months = Array.from({ length: 12 }, (_, i) => {
@@ -30,8 +28,8 @@ const MoodMap = () => {
     };
   });
 
-  // Generate year options (from 2024 to 2030)
-  const years = Array.from({ length: 7 }, (_, i) => 2024 + i);
+  // Generate year options (from 2025 to 2030)
+  const years = Array.from({ length: 7 }, (_, i) => 2025 + i);
 
   // Navigation Component
   const Navigation = () => {
@@ -110,6 +108,20 @@ const MoodMap = () => {
     return Array.from({ length: daysInMonth }, (_, i) => new Date(selectedYear, month, i + 1));
   };
 
+  // Add the query hook
+  const { data: monthMoods, error } = useGetMoodsQuery({
+    userId,
+    startDate: new Date(selectedYear, selectedMonth, 1).toISOString(),
+    endDate: new Date(selectedYear, selectedMonth + 1, 0).toISOString()
+  });
+  console.log(error)
+  // Use useEffect to update the moods in the store when data is received
+  useEffect(() => {
+    if (monthMoods) {
+      dispatch(setMonthMoods(monthMoods));
+    }
+  }, [monthMoods, dispatch, selectedMonth, selectedYear]);
+
   const MonthSection = ({ month, monthIndex }) => {
     return (
       <div className="mb-8">
@@ -118,15 +130,20 @@ const MoodMap = () => {
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3">
           {getDaysInMonth(monthIndex).map((date) => {
-            const dateKey = date.toISOString().split('T')[0];
-            const dayMood = moodData[dateKey] || { mood: emotions[0], note: '', intensity: 50 };
-            
+            const dateObj = new Date(date)
+            const dateKey = Number(
+              dateObj.getFullYear().toString() +
+              (dateObj.getMonth() + 1).toString().padStart(2, '0') +
+              dateObj.getDate().toString().padStart(2, '0')
+            );
+            const dayMood = moods[dateKey];
+
             return (
               <DayCard 
                 key={date.toISOString()}
                 date={date}
-                mood={dayMood.mood}
-                note={dayMood.note}
+                emotions={dayMood?.emotion || emotions[0]}
+                note={dayMood?.note || ''}
                 onClick={() => {
                   setSelectedDate(date);
                   setIsModalOpen(true);
@@ -168,9 +185,18 @@ const MoodMap = () => {
             setIsModalOpen(false);
             setSelectedDate(null);
           }}
-          moodData={moodData}
-          setMoodData={setMoodData}
+          moodData={moods}
           emotions={emotions}
+          onSave={async (moodData) => {
+            try {
+              const response = await createMood(moodData).unwrap();
+              dispatch(setMood(response));
+              // You might want to show a success notification here
+            } catch (error) {
+              console.error('Failed to save mood:', error);
+              // You might want to show an error notification here
+            }
+          }}
         />
       )}
     </div>

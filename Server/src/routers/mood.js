@@ -9,10 +9,27 @@ router.post('/create', auth, async (req, res) => {
     try {
         const { intensity, emotion, date, note } = req.body;
         
+        // Check if mood already exists for this date and user
+        const existingMood = await Mood.findOne({
+            userId: req.user._id,
+            date: new Date(date)
+        });
+
+        if (existingMood) {
+            // Update existing mood
+            existingMood.intensity = intensity;
+            existingMood.emotion = emotion;
+            existingMood.note = note;
+            
+            const updatedMood = await existingMood.save();
+            return res.json(updatedMood);
+        }
+
+        // Create new mood if none exists
         const newMood = new Mood({
             userId: req.user._id,
             intensity,
-            emotion, 
+            emotion,
             date,
             note
         });
@@ -27,8 +44,9 @@ router.post('/create', auth, async (req, res) => {
 // Get moods by userId and date range
 router.get('/user/:userId', auth, async (req, res) => {
     try {
-        const { startDate, endDate } = req.query;
-        
+        const startDate = req.query.startDate;
+        const endDate = req.query.endDate;
+        console.log(startDate, endDate)
         const query = {
             userId: req.params.userId,
         };

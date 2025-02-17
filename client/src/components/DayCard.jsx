@@ -1,4 +1,4 @@
-const DayCard = ({ date, mood, note, onClick }) => {
+const DayCard = ({ date, note, onClick, emotions }) => {
   return (
     <div
       onClick={onClick}
@@ -13,8 +13,12 @@ const DayCard = ({ date, mood, note, onClick }) => {
           })}
         </div>
       </div>
-      <div className="flex items-start gap-2">
-        <span className="text-2xl">{mood.emoji}</span>
+      <div className="flex flex-col gap-2">
+        {emotions && (
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">{emotions?.emoji}</span>
+          </div>
+        )}
         {note && (
           <p className="text-sm text-gray-600 truncate">
             {note}
