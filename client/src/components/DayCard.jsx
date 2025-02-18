@@ -16,7 +16,7 @@ const DayCard = ({ date, note, onClick, emotions }) => {
       <div className="flex flex-col gap-2">
         {emotions && (
           <div className="flex items-center gap-2">
-            <span className="text-2xl">{emotions?.emoji}</span>
+            <span className="text-2xl">{emotions?.emoji ? emotions.emoji : "🙂" }</span>
           </div>
         )}
         {note && (

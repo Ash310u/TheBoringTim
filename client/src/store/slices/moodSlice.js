@@ -42,7 +42,7 @@ const moodSlice = createSlice({
         },
         setMonthMoods: (state, action) => {
             const moods = action.payload;
-            console.log(moods);
+
             // Clear existing moods
             state.moods = {};
 

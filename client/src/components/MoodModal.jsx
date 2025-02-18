@@ -10,7 +10,7 @@ const MoodModal = ({ date, onClose, moodData, emotions, onSave }) => {
     dateObj.getDate().toString().padStart(2, '0')
   );
   const [tempMoodData, setTempMoodData] = useState(
-    moodData[dateKey] || { mood: emotions[0], note: '', intensity: 50 }
+    moodData[dateKey] || { mood: emotions[0], note: '', intensity: 50, name:'Happy', emoji:'😊' }
   );
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -53,8 +53,8 @@ const MoodModal = ({ date, onClose, moodData, emotions, onSave }) => {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               <span className="flex items-center gap-2">
-                <span className="text-2xl">{tempMoodData.mood.emoji}</span>
-                <span className="text-gray-700">{tempMoodData.mood.name}</span>
+                <span className="text-2xl">{tempMoodData.mood?.emoji}</span>
+                <span className="text-gray-700">{tempMoodData.mood?.name}</span>
               </span>
               <span className="text-purple-400">▼</span>
             </button>

@@ -4,6 +4,25 @@ import { useEffect, useRef } from 'react';
 import defaultAvatar from "../assets/default_avatar.jpg";
 import EditPhotoButton from "../components/features/EditPhotoButton";
 import RemovePhotoButton from "../components/features/RemovePhotoButton";
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -79,6 +98,77 @@ const Profile = () => {
       console.error('Error removing avatar:', error);
       alert('Failed to remove avatar. Please try again.');
     }
+  };
+
+  const generateDummyData = () => {
+    const days = Array.from({ length: 31 }, (_, i) => i + 1);
+    const intensities = days.map(() => Math.floor(Math.random() * 100) + 1);
+    const moods = days.map(() => {
+      const moodEmojis = ['😊', '😌', '😔', '😢', '😡', '😴', '🥳', '😎'];
+      return moodEmojis[Math.floor(Math.random() * moodEmojis.length)];
+    });
+
+    return { days, intensities, moods };
+  };
+
+  const { days, intensities, moods } = generateDummyData();
+
+  const chartData = {
+    labels: days,
+    datasets: [
+      {
+        label: 'Intensity',
+        data: intensities,
+        backgroundColor: 'rgba(147, 51, 234, 0.5)', // Purple color
+        borderColor: 'rgba(147, 51, 234, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Monthly Meditation Intensity',
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const index = context.dataIndex;
+            return `Intensity: ${context.raw}% | Mood: ${moods[index]}`;
+          },
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Intensity (%)',
+        },
+        max: 100,
+        ticks: {
+          stepSize: 10, // This will create ticks at intervals of 10
+          callback: function(value) {
+            return value + '%';
+          }
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Date',
+        },
+      },
+    },
+    maintainAspectRatio: false,
+    barThickness: 12,
   };
 
   if (isLoading) {
@@ -158,15 +248,14 @@ const Profile = () => {
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h1 className="text-3xl font-semibold text-navy-800">Your Profile</h1>
-                  <p className="text-gray-600 mt-2">Find your inner peace</p>
+                  <p className="text-gray-600 mt-2 font-thin">Find your inner peace using PeaceSync</p>
                 </div>
               </div>
 
-              {/* Recent Sessions */}
-              <div className="space-y-6 mb-8">
+              {/* <div className="space-y-6 mb-8">
                 <h2 className="text-xl font-semibold text-navy-800">Recent Sessions</h2>
                 <div className="grid md:grid-cols-2 gap-4">
-                  {/* Session Card 2 */}
+
                   <div className="bg-purple-50 p-6 rounded-2xl flex items-center justify-between">
                     <div>
                       <p className="font-medium text-lg">Relax Mode</p>
@@ -177,7 +266,6 @@ const Profile = () => {
                     </div>
                   </div>
 
-                  {/* Session Card 3 */}
                   <div className="bg-purple-50 p-6 rounded-2xl flex items-center justify-between">
                     <div>
                       <p className="font-medium text-lg">Deep Focus</p>
@@ -188,15 +276,23 @@ const Profile = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Analytics Section */}
-              <div className="mt-8 pt-8 border-t border-gray-100">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-navy-800">Meditation Analytics</h2>
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold text-navy-800">Progress Visualization</h2>
                 </div>
-                <div className="bg-purple-50 rounded-2xl p-6 h-[300px] flex items-center justify-center">
-                  <p className="text-gray-500">Graph visualization coming soon</p>
+                <div className="bg-purple-50 rounded-2xl p-4 h-96">
+                  <Bar data={chartData} options={options} height={250} />
+                  <div className="mt-2 flex flex-wrap gap-2 justify-center">
+                    {/* {moods.map((mood, index) => (
+                      <div key={index} className="flex items-center gap-1">
+                        <span className="text-sm">{index + 1}:</span>
+                        <span className="text-xl">{mood}</span>
+                      </div>
+                    ))} */}
+                  </div>
                 </div>
               </div>
             </div>

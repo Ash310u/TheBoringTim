@@ -114,7 +114,7 @@ const MoodMap = () => {
     startDate: new Date(selectedYear, selectedMonth, 1).toISOString(),
     endDate: new Date(selectedYear, selectedMonth + 1, 0).toISOString()
   });
-  console.log(error)
+
   // Use useEffect to update the moods in the store when data is received
   useEffect(() => {
     if (monthMoods) {
