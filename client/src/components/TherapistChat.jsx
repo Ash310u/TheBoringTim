@@ -4,7 +4,6 @@ import AiTherapist from '../AI/therapist';
 
 const TherapistChat = () => {
     const [messages, setMessages] = useState([]);
-    const [isEmerOpen, setIsEerOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef(null);
 
@@ -130,7 +129,6 @@ const TherapistChat = () => {
 
     const handleMentalHealthContacts = () => {
         console.log("check")
-        setIsEerOpen((curr) => !curr)
         let emerContact = mentalHealthContacts.map((org, i) => {
             console.log(org)
             return (
